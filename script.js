@@ -85,11 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (msg.includes('services') || msg.includes('offer') || msg.includes('provide')) {
-      return "My services include Data Analysis, Web Development, Digital Marketing Strategy, Branding, and Photography.";
+      return "My services include Data Analysis, Web Development, Digital Marketing Strategy, and Graphics Designing.";
     }
 
     if (msg.includes('contact') || msg.includes('email') || msg.includes('reach')) {
-      return "You can contact me via the form below or reach out on LinkedIn, WhatsApp, or Email — links are in the footer!";
+      return "You can contact me via the form below or reach out on LinkedIn, WhatsApp,Facebook or Email — links are in the footer!";
     }
 
     return "🤖 Sorry, I didn't understand that. Please try rephrasing your question.";
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  sendBtn.addEventListener('click', handleSend);
+  sendBtn.addEventListener('click', handleSend);  
   userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSend();
   });
@@ -123,3 +123,44 @@ toggleTheme.addEventListener('click', () => {
   const newTheme = currentTheme === 'light' ? 'dark' : 'light';
   document.body.setAttribute('data-bs-theme', newTheme);
 });
+//my chatbox
+    async function sendToOpenAI() {
+      const userInput = document.getElementById('userInput').value;
+      const responseBox = document.getElementById('response');
+
+      responseBox.innerHTML = "Thinking... 🧠";
+
+      const reply = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": "Bearer YOUR_OPENAI_API_KEY" // REMOVED for security
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content: `You are Lucie's friendly AI assistant. You're designed to answer questions about her such as:
+              - Her services (e.g., web development, graphics designing, digital marketing)
+              - Her projects (e.g., language learning app, decoration website, calculator web app, my portfolio...)
+              - Her experience (have a year of experience in the field of softwae engineering precisely)
+              - How to contact her(you can contact me through whatsapp, email, github, or linkedin)
+              - Where she's located (located in douala-cameroon)
+              - Her best project so far (the mother tongue web app is my most inspiring project)
+
+              Always reply warmly, clearly, and conversationally like Lucie herself would.`
+            },
+            {
+              role: "user",
+              content: userInput
+            }
+          ]
+        })
+      });
+
+      const data = await reply.json();
+      responseBox.innerHTML = data.choices[0].message.content;
+    }//
+
+
