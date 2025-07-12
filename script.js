@@ -21,21 +21,26 @@ counters.forEach(counter => {
 });
 
 // Portfolio Filter
-const filterButtons = document.querySelectorAll('#filters .btn');
-const projectCards = document.querySelectorAll('#projectGrid > div');
+document.addEventListener("DOMContentLoaded", function () {
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const projectCards = document.querySelectorAll("#projectgrid > div");
 
-filterButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    document.querySelector('#filters .btn.active')?.classList.remove('active');
-    button.classList.add('active');
+  filterButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const filter = button.getAttribute("data-filter");
 
-    const category = button.getAttribute('data-filter');
-    projectCards.forEach(card => {
-      if (category === 'all' || card.classList.contains(category)) {
-        card.style.display = 'block';
-      } else {
-        card.style.display = 'none';
-      }
+      //  Highlight clicked button
+      filterButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      //  Filter logic
+      projectCards.forEach(card => {
+        if (filter === "all") {
+          card.style.display = "block";
+        } else {
+          card.style.display = card.classList.contains(filter) ? "block" : "none";
+        }
+      });
     });
   });
 });
