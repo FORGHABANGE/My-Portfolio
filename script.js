@@ -45,127 +45,92 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Chatbot Logic
-document.addEventListener("DOMContentLoaded", () => {
-  const chatbot = document.getElementById('chatbot');
-  const chatbotBody = chatbot.querySelector('.chatbot-body');
-  const chatbotHeader = chatbot.querySelector('.chatbot-header');
+//chatbot
 
-  // Toggle visibility
-  chatbotHeader.addEventListener('click', () => {
-    chatbot.classList.toggle('active');
-  });
+const chatbotBody = document.getElementById("chatbot-body");
+const chatbotMessages = document.getElementById("chatbot-messages");
 
-  // Load HTML UI
-  chatbotBody.innerHTML = `
-    <div class="chat-log">
-      <p>Hello! 👋 I'm your virtual assistant.</p>
-      <p>Try asking me:</p>
-      <ul>
-        <li>Tell me about your Data Analytics projects</li>
-        <li>What web & design work do you do?</li>
-        <li>What services do you offer?</li>
-        <li>How can I contact you?</li>
-      </ul>
-    </div>
-    <div class="chatbot-input">
-      <input type="text" id="userInput" placeholder="Type your question..." />
-      <button id="sendBtn">Send</button>
-    </div>
-  `;
+function toggleChat() {
+  if (chatbotBody.style.display === "flex") {
+    chatbotBody.style.display = "none";
+  } else {
+    chatbotBody.style.display = "flex";
+    chatbotMessages.innerHTML = "";
+  }
+}
 
-  const sendBtn = chatbot.querySelector('#sendBtn');
-  const userInput = chatbot.querySelector('#userInput');
-  const chatLog = chatbot.querySelector('.chat-log');
+function handleKeyPress(e) {
+  if (e.key === "Enter") {
+    sendMessage();
+  }
+}
 
-  const getBotResponse = (message) => {
-    const msg = message.toLowerCase();
+function sendMessage() {
+  const input = document.getElementById("userInput");
+  const msg = input.value.trim();
+  if (msg === "") return;
 
-    if (msg.includes('data') || msg.includes('analytics') || msg.includes('dashboard')) {
-      return "I've worked on interactive dashboards, predictive modeling, and business reporting using tools like Excel, Power BI, and Python.";
-    }
+  appendMessage("user", msg);
+  respondToUser(msg.toLowerCase());
+  input.value = "";
+}
 
-    if (msg.includes('web') || msg.includes('design') || msg.includes('website')) {
-      return "I design and develop responsive websites using HTML, CSS, JavaScript, Bootstrap, and modern UI libraries.";
-    }
+function appendMessage(sender, text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  div.style.margin = "5px 0";
+  div.style.padding = "8px";
+  div.style.borderRadius = "5px";
+  div.style.maxWidth = "90%";
+  div.style.fontSize = "14px";
+  div.classList.add("chat-message");
 
-    if (msg.includes('services') || msg.includes('offer') || msg.includes('provide')) {
-      return "My services include Data Analysis, Web Development, Digital Marketing Strategy, and Graphics Designing.";
-    }
+  if (sender === "user") {
+    div.style.backgroundColor = "#f0f0f0";
+    div.style.alignSelf = "flex-end";
+  } else {
+    div.style.backgroundColor = "#e0f2ff";
+    div.style.alignSelf = "flex-start";
+    speak(text); // Only speak bot responses
+  }
 
-    if (msg.includes('contact') || msg.includes('email') || msg.includes('reach')) {
-      return "You can contact me via the form below or reach out on LinkedIn, WhatsApp,Facebook or Email — links are in the footer!";
-    }
-
-    return "🤖 Sorry, I didn't understand that. Please try rephrasing your question.";
+  div.onclick = () => {
+    div.classList.toggle("selected-message");
   };
 
-  const addToChat = (sender, text) => {
-    chatLog.innerHTML += `<p><strong>${sender}:</strong> ${text}</p>`;
-    chatLog.scrollTop = chatLog.scrollHeight;
-  };
+  chatbotMessages.appendChild(div);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
 
-  const handleSend = () => {
-    const question = userInput.value.trim();
-    if (question) {
-      addToChat('You', question);
-      const response = getBotResponse(question);
-      addToChat('Bot', response);
-      userInput.value = '';
-    }
-  };
+function respondToUser(msg) {
+  let response = "Hmm, I didn't understand that. Try asking something else okay.";
+  if (msg.includes("greetings")|| msg.includes("hey")|| msg.includes("hello")){
+    response = "Hi there! I'm lucie, your AI assistant. How can I help you?";
+  } else if (msg.includes("thanks much")|| msg.includes("gracias")|| msg.includes("merci")){
+    response = "it's my pleasure! If you have any more questions, feel free to ask.";
+  } else if (msg.includes("your name") || msg.includes("who are you")) {
+    response = "I am Forghab Lucie, a web developer and digital creative from Douala–Cameroon.";
+  } else if (msg.includes("contact") || msg.includes("get in touch") || msg.includes("reach you")) {
+    response = `You can contact me via:\n📱 WhatsApp: https://wa.me/678349381\n💼 LinkedIn: https://www.linkedin.com/in/ForghabAnge\n💻 GitHub: https://github.com/FORGHABANGE\n📧 Email: angelucie2005@gmail.com`;
+  } else if (msg.includes("projects")) {
+    response = "I've built a Portfolio Site, Calculator App with Currency Converter, Decor Website, Dashboard, and Mother Tongue App!";
+  } else if (msg.includes("industry") || msg.includes("where you work")) {
+    response = "I currently work at TTSET Global LTD – we deliver the best in technology services!";
+  } else if (msg.includes("what is this website")) {
+    response = "It's all about showcasing my skills, passion, abilities, and strength as a software engineer — and to attract employers, clients, and collaborators!";
+  }
+  setTimeout(() => appendMessage("bot", response), 400);
+}
 
-  sendBtn.addEventListener('click', handleSend);  
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSend();
-  });
-});
+function deleteSelectedMessages() {
+  const selected = chatbotMessages.querySelectorAll(".selected-message");
+  selected.forEach(el => el.remove());
+}
 
-// Theme Toggle
-const toggleTheme = document.getElementById('toggleTheme');
-toggleTheme.addEventListener('click', () => {
-  const currentTheme = document.body.getAttribute('data-bs-theme') || 'light';
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-bs-theme', newTheme);
-});
-//my chatbox
-    async function sendToOpenAI() {
-      const userInput = document.getElementById('userInput').value;
-      const responseBox = document.getElementById('response');
-
-      responseBox.innerHTML = "Thinking... 🧠";
-
-      const reply = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": "Bearer YOUR_OPENAI_API_KEY" // REMOVED for security
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "system",
-              content: `You are Lucie's friendly AI assistant. You're designed to answer questions about her such as:
-              - Her services (e.g., web development, graphics designing, digital marketing)
-              - Her projects (e.g., language learning app, decoration website, calculator web app, my portfolio...)
-              - Her experience (have a year of experience in the field of softwae engineering precisely)
-              - How to contact her(you can contact me through whatsapp, email, github, or linkedin)
-              - Where she's located (located in douala-cameroon)
-              - Her best project so far (the mother tongue web app is my most inspiring project)
-
-              Always reply warmly, clearly, and conversationally like Lucie herself would.`
-            },
-            {
-              role: "user",
-              content: userInput
-            }
-          ]
-        })
-      });
-
-      const data = await reply.json();
-      responseBox.innerHTML = data.choices[0].message.content;
-    }//
-
-
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    window.speechSynthesis.speak(msg);
+  }
+}
