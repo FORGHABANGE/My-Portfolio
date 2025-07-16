@@ -19,6 +19,30 @@ counters.forEach(counter => {
   };
   updateCounter();
 });
+//toggle button
+const toggleBtn = document.getElementById("toggleTheme");
+
+// Set initial theme
+if (!document.body.hasAttribute("data-bs-theme")) {
+  document.body.setAttribute("data-bs-theme", "light");
+}
+
+// Set emoji based on current theme
+function updateToggleIcon() {
+  const currentTheme = document.body.getAttribute("data-bs-theme");
+  toggleBtn.textContent = currentTheme === "dark" ? "🌞" : "🌙";
+}
+
+// Call it once on page load
+updateToggleIcon();
+
+toggleBtn.addEventListener("click", () => {
+  const currentTheme = document.body.getAttribute("data-bs-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  document.body.setAttribute("data-bs-theme", newTheme);
+
+  updateToggleIcon(); // Update the emoji
+});
 
 // Portfolio Filter
 document.addEventListener("DOMContentLoaded", function () {
@@ -46,7 +70,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //chatbot
-
 const chatbotBody = document.getElementById("chatbot-body");
 const chatbotMessages = document.getElementById("chatbot-messages");
 
@@ -74,26 +97,17 @@ function sendMessage() {
   respondToUser(msg.toLowerCase());
   input.value = "";
 }
-
 function appendMessage(sender, text) {
   const div = document.createElement("div");
   div.textContent = text;
-  div.style.margin = "5px 0";
-  div.style.padding = "8px";
-  div.style.borderRadius = "5px";
-  div.style.maxWidth = "90%";
-  div.style.fontSize = "14px";
   div.classList.add("chat-message");
 
   if (sender === "user") {
-    div.style.backgroundColor = "#f0f0f0";
-    div.style.alignSelf = "flex-end";
+    div.classList.add("sent");
   } else {
-    div.style.backgroundColor = "#e0f2ff";
-    div.style.alignSelf = "flex-start";
+    div.classList.add("received");
     speak(text); // Only speak bot responses
   }
-
   div.onclick = () => {
     div.classList.toggle("selected-message");
   };
