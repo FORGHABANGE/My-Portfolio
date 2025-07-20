@@ -28,6 +28,18 @@ section {
 /* =====================
    Counters
 ====================== */
+  .move-text {
+    display: inline-block;
+    animation: gentleBounce 2s ease-in-out infinite;
+  }
+ @keyframes gentleBounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
 .counter {
   font-size: 2.5rem;
   color: #1e3a8a;
